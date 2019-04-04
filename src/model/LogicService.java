@@ -84,8 +84,7 @@ public class LogicService extends Application {
 
         for (GameObject Asteroid : asteroids) {
             if (player.isColliding(Asteroid)) {
-                player.setAlive(false);
-                Asteroid.setAlive(false);
+                primaryStage.close();
                 //game over call
             }
         }

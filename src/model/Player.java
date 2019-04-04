@@ -1,7 +1,6 @@
 package model;
 
 import javafx.scene.shape.Polygon;
-import model.GameObject;
 
 public class Player extends GameObject {
 
