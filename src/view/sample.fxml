@@ -11,6 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import java.lang.String?>
 <GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
    <columnConstraints>
       <ColumnConstraints />
@@ -32,10 +33,12 @@
             </Text>
             <TextField fx:id="tf_name" layoutX="36.0" layoutY="75.0" />
             <Text layoutX="36.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter username" />
-            <ChoiceBox layoutX="35.0" layoutY="108.0" prefWidth="150.0" value="moeilijkheidsgraad">
+            <ChoiceBox  fx:id="choiceBox" layoutX="35.0" layoutY="108.0" prefWidth="150.0" value="1. makkelijk">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
-
+                       <String fx:value="1. makkelijk" />
+                       <String fx:value="2. gemiddeld" />
+                       <String fx:value="3. moeilijk" />
                     </FXCollections>
                 </items>
             </ChoiceBox>

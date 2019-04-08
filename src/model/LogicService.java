@@ -19,20 +19,28 @@ public class LogicService extends Application {
     private Stage primaryStage;
     private Pane root;
     private GameObject player;
-
+    private int difficulty;
+    private double diffTimer;
+    private String name;
     private BooleanProperty leftPressed = new SimpleBooleanProperty();
     private BooleanProperty rightPressed = new SimpleBooleanProperty();
     private BooleanProperty spacePressed = new SimpleBooleanProperty();
     private BooleanProperty upPressed = new SimpleBooleanProperty();
 
-    private long earliestNextShot = System.currentTimeMillis() + 200;
+    private final long SHOT_DELAY = 200;
+    private long earliestNextShot = System.currentTimeMillis() + SHOT_DELAY;
 
     private List<GameObject> bullets = new ArrayList<>();
     private List<GameObject> asteroids = new ArrayList<>();
 
-    public LogicService() throws Exception{
+    public LogicService(String setDF,String name) throws Exception{
         start(new Stage());
+        setDF = setDF.replaceAll("\\D+","");
+        difficulty = Integer.parseInt(setDF);
+        this.name = name;
+        System.out.println(difficulty);
     }
+
 
     private void addBullet(GameObject Bullet, double x, double y){
         bullets.add(Bullet);
@@ -84,8 +92,10 @@ public class LogicService extends Application {
 
         for (GameObject Asteroid : asteroids) {
             if (player.isColliding(Asteroid)) {
-                primaryStage.close();
+                //primaryStage.close();
                 //game over call
+                Asteroid.setAlive(false);
+                root.getChildren().removeAll(Asteroid.getView());
             }
         }
         bullets.removeIf(GameObject::isDead);
@@ -97,12 +107,23 @@ public class LogicService extends Application {
 
         //asteroids.forEach(GameObject::floatSpeed);
         player.update();
-        if (Math.random() < 0.03){
+
+        if (difficulty == 1){
+            diffTimer = 0.015;
+        }
+        else if (difficulty == 2){
+            diffTimer = 0.04;
+        }
+        else {
+            diffTimer = 0.08;
+        }
+        if (Math.random() < diffTimer){
             addAsteroid(new AsteroidsApp.Asteroid(), Math.random() * root.getPrefWidth(),
                     Math.random() * root.getPrefHeight());
             asteroids.get(asteroids.size()-1).floatSpeed();
         }
     }
+
 
     public void gameStart() throws Exception{
         primaryStage.setScene(new Scene(createContent()));
@@ -156,7 +177,7 @@ public class LogicService extends Application {
                         bullet.setVelocity(player.getAngle().normalize().multiply(3.5));
                         addBullet(bullet, player.getView().getTranslateX() + 15, player.getView().getTranslateY());
 
-                        earliestNextShot = System.currentTimeMillis() + 200;
+                        earliestNextShot = System.currentTimeMillis() + SHOT_DELAY;
                     }
                 }
             }

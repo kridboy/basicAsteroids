@@ -36,6 +36,7 @@ public class GameObject {
 
 
     public boolean isDead(){
+        //TODO Ke na kijken
         return !alive;
     }
 
