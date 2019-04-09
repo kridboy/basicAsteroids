@@ -8,6 +8,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controller.AsteroidsApp;
 
@@ -19,9 +22,13 @@ public class LogicService extends Application {
     private Stage primaryStage;
     private Pane root;
     private GameObject player;
-    private int difficulty;
+    private byte difficulty;
+    private int score = 0;
+    private int lives = 3;
     private double diffTimer;
-    private String name;
+    private String playerName;
+    private Text scoreText = new Text();
+    private Text livesText = new Text();
     private BooleanProperty leftPressed = new SimpleBooleanProperty();
     private BooleanProperty rightPressed = new SimpleBooleanProperty();
     private BooleanProperty spacePressed = new SimpleBooleanProperty();
@@ -36,9 +43,19 @@ public class LogicService extends Application {
     public LogicService(String setDF,String name) throws Exception{
         start(new Stage());
         setDF = setDF.replaceAll("\\D+","");
-        difficulty = Integer.parseInt(setDF);
-        this.name = name;
-        System.out.println(difficulty);
+        difficulty = Byte.parseByte(setDF);
+        this.playerName = name;
+        //TODO waarom wil deze string niet op tijd doorgegeven worden?
+
+        if (difficulty == 1){
+            diffTimer = 0.015;
+        }
+        else if (difficulty == 2){
+            diffTimer = 0.04;
+        }
+        else {
+            diffTimer = 0.08;
+        }
     }
 
 
@@ -54,6 +71,20 @@ public class LogicService extends Application {
 
         player = new Player();
         addGameObject(player, 300, 300);
+
+        //TODO eventueel in aparte klasse steken
+        scoreText.setX(0);
+        scoreText.setY(590);
+        scoreText.setFont(Font.font("Consolas", FontWeight.BOLD, 15));
+
+        livesText.setX(530);
+        livesText.setY(590);
+        livesText.setFont(Font.font("Consolas", FontWeight.BOLD, 15));
+
+        scoreText.setText("Name: " + playerName + " Score: " + score);
+        livesText.setText("lives: " + lives);
+        root.getChildren().add(scoreText);
+        root.getChildren().add(livesText);
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -77,11 +108,14 @@ public class LogicService extends Application {
     }
 
     private void onUpdate(){
+        //TODO implementatie van boundsherkenning -> als object out of bounds gaat ofwel verwijderen of verplaatsen
         for (GameObject Bullet : bullets){
             for (GameObject Asteroid : asteroids){
                 if (Bullet.isColliding(Asteroid)){
                     Bullet.setAlive(false);
                     Asteroid.setAlive(false);
+                    score = score + 100;
+                    scoreText.setText("Name: "+ playerName +" Score: " + score);
                     //bij verdere uitwerking scattermethod maken die asteroid in stukken breekt
 
                     root.getChildren().removeAll(Bullet.getView(), Asteroid.getView());
@@ -92,10 +126,20 @@ public class LogicService extends Application {
 
         for (GameObject Asteroid : asteroids) {
             if (player.isColliding(Asteroid)) {
-                //primaryStage.close();
-                //game over call
-                Asteroid.setAlive(false);
-                root.getChildren().removeAll(Asteroid.getView());
+                System.out.println(lives);
+                lives = lives - 1;
+                if(lives > 0) {
+                    Asteroid.setAlive(false);
+                    root.getChildren().removeAll(Asteroid.getView());
+
+                    livesText.setText("lives: " + lives);
+                }
+                else{
+                    //primaryStage.close();
+                    // game over call}
+                }
+
+
             }
         }
         bullets.removeIf(GameObject::isDead);
@@ -108,15 +152,7 @@ public class LogicService extends Application {
         //asteroids.forEach(GameObject::floatSpeed);
         player.update();
 
-        if (difficulty == 1){
-            diffTimer = 0.015;
-        }
-        else if (difficulty == 2){
-            diffTimer = 0.04;
-        }
-        else {
-            diffTimer = 0.08;
-        }
+
         if (Math.random() < diffTimer){
             addAsteroid(new AsteroidsApp.Asteroid(), Math.random() * root.getPrefWidth(),
                     Math.random() * root.getPrefHeight());
@@ -190,6 +226,7 @@ public class LogicService extends Application {
 
         this.primaryStage = stage;
         gameStart();
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

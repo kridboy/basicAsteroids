@@ -16,7 +16,8 @@ public class Controller {
 
     @FXML
     public void onSubmitClick() throws Exception {
-        LogicService service = new LogicService(choiceBox.getValue(),String.valueOf(tf_name));
+        LogicService service = new LogicService(choiceBox.getValue(),tf_name.getText());
+        System.out.println(tf_name.getText());
         //
 
     }
