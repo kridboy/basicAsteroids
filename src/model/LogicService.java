@@ -108,7 +108,15 @@ public class LogicService extends Application {
     }
 
     private void onUpdate(){
-        //TODO implementatie van boundsherkenning -> als object out of bounds gaat ofwel verwijderen of verplaatsen
+        for(GameObject Asteroid : asteroids){
+            borderDetection(Asteroid);
+        }
+        borderDetection(player);
+
+        for (GameObject Bullet : bullets){
+            deletebullet(Bullet);
+        }
+
         for (GameObject Bullet : bullets){
             for (GameObject Asteroid : asteroids){
                 if (Bullet.isColliding(Asteroid)){
@@ -153,6 +161,7 @@ public class LogicService extends Application {
         player.update();
 
 
+
         if (Math.random() < diffTimer){
             addAsteroid(new AsteroidsApp.Asteroid(), Math.random() * root.getPrefWidth(),
                     Math.random() * root.getPrefHeight());
@@ -160,6 +169,28 @@ public class LogicService extends Application {
         }
     }
 
+    private void borderDetection(GameObject object){
+        double x = object.getView().getTranslateX();
+        double y = object.getView().getTranslateY();
+
+        if(x < -15){ object.getView().setTranslateX(object.getView().getTranslateX() + 600);}
+        if(x > 600){ object.getView().setTranslateX(object.getView().getTranslateX() - 600);}
+        if(y < -15){ object.getView().setTranslateY(object.getView().getTranslateY() + 600);}
+        if(y > 600){ object.getView().setTranslateY(object.getView().getTranslateY() - 600);}
+    }
+    private void deletebullet(GameObject object){
+        double x = object.getView().getTranslateX();
+        double y = object.getView().getTranslateY();
+
+        if(x < -5 || x > 605 ){
+            object.setAlive(false);
+            root.getChildren().removeAll(object.getView());
+        }
+        if(y < -5 || y > 605 ){
+            object.setAlive(false);
+            root.getChildren().removeAll(object.getView());
+        }
+    }
 
     public void gameStart() throws Exception{
         primaryStage.setScene(new Scene(createContent()));
@@ -214,6 +245,7 @@ public class LogicService extends Application {
                         addBullet(bullet, player.getView().getTranslateX() + 15, player.getView().getTranslateY());
 
                         earliestNextShot = System.currentTimeMillis() + SHOT_DELAY;
+                        System.out.println(player.getView().getTranslateX() + " " + player.getView().getTranslateY());
                     }
                 }
             }

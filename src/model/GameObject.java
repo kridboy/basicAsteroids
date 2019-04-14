@@ -9,7 +9,7 @@ public class GameObject {
     private Point2D angle = new Point2D(0,0);
 
     private long timeDecay = System.currentTimeMillis() + 100;
-    private boolean alive = true;
+    public boolean alive = true;
     private double i = 0;
 
     public GameObject(Node view){
@@ -38,7 +38,8 @@ public class GameObject {
     public boolean isDead(){
         //TODO Ke na kijken
         return !alive;
-    }
+
+        }
 
     public void setAlive(boolean alive){
         this.alive = alive;
@@ -81,4 +82,6 @@ public class GameObject {
     public boolean isColliding(GameObject other){
         return getView().getBoundsInParent().intersects(other.getView().getBoundsInParent());
     }
+
 }
+
